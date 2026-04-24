@@ -1,0 +1,124 @@
+Para estructurar el proyecto **Heladería** utilizando el paradigma de agentes (`.agents`), organizaremos el entorno de trabajo de manera modular. A continuación, presento la secuencia lógica para establecer la infraestructura y el desarrollo del MVP (CRUD de productos).
+
+---
+
+### 1. Preparación del Entorno (.agents)
+
+Crearemos la estructura raíz del proyecto `proyectoproductos`.
+
+```text
+proyectoproductos/
+├── .agents/          # Configuración de habilidades
+│   ├── SKILL.md      # Documentación de capacidades
+│   ├── scripts/      # Scripts de automatización de despliegue
+│   ├── ejemplos/     # Snippets de código de referencia
+│   └── resources/    # Assets (iconos, lógica de negocio)
+├── lib/
+│   ├── models/       # Modelo de Producto
+│   ├── services/     # Lógica de Firebase/Firestore
+│   └── screens/      # UI (Inicio, CRUD)
+└── pubspec.yaml      # Dependencias
+```
+
+---
+
+### 2. Prerrequisitos y Configuración
+
+Ejecuta estos comandos en tu terminal para validar el entorno:
+
+1.  **Verificar Flutter:** `flutter doctor`
+2.  **Instalar Firebase CLI:** `npm install -g firebase-tools`
+3.  **Login y Conexión:**
+    * `firebase login`
+    * `dart pub global activate flutterfire_cli`
+    * `flutterfire configure` (Selecciona tu proyecto creado en la consola de Firebase).
+
+---
+
+### 3. Configuración `pubspec.yaml`
+Añade las dependencias necesarias para integrar Firebase y Firestore:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: latest
+  cloud_firestore: latest
+```
+Ejecuta `flutter pub get` después de guardar.
+
+---
+
+### 4. Implementación del Proyecto (CRUD)
+
+#### A. Modelo de Datos (`lib/models/producto.dart`)
+```dart
+class Producto {
+  final String id;
+  final String nombre;
+  final double precio;
+
+  Producto({required this.id, required this.nombre, required this.precio});
+
+  factory Producto.fromMap(String id, Map<String, dynamic> data) {
+    return Producto(id: id, nombre: data['nombre'], precio: data['precio']);
+  }
+}
+```
+
+#### B. Servicio Firestore (`lib/services/firestore_service.dart`)
+Este servicio actúa como el **"Skill de Código"** para manejar el CRUD.
+
+```dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/producto.dart';
+
+class FirestoreService {
+  final CollectionReference _db = FirebaseFirestore.instance.collection('productos');
+
+  // Crear
+  Future<void> agregarProducto(String nombre, double precio) => 
+      _db.add({'nombre': nombre, 'precio': precio});
+
+  // Leer
+  Stream<List<Producto>> getProductos() => _db.snapshots().map((snapshot) =>
+      snapshot.docs.map((doc) => Producto.fromMap(doc.id, doc.data() as Map<String, dynamic>)).toList());
+
+  // Borrar
+  Future<void> eliminarProducto(String id) => _db.doc(id).delete();
+}
+```
+
+---
+
+### 5. Estructura de Habilidades (`.agents/SKILL.md`)
+
+Este archivo define cómo tus agentes interactúan con el proyecto:
+
+```markdown
+# Habilidad: Agente Global .agents
+- **Diseño**: Gestión de UI basada en Material 3.
+- **Código**: Generación de funciones CRUD para Firestore.
+- **Scraping**: Extracción de datos de precios de insumos (opcional).
+
+## Comandos de Ejecución
+- `flutter run`: Inicia la app.
+- `flutterfire deploy`: Despliega reglas de seguridad.
+```
+
+---
+
+### 6. Pantalla Principal (UI)
+
+En `lib/screens/home_screen.dart`, implementarás la navegación y el `StreamBuilder` para visualizar los datos en tiempo real desde Firestore.
+
+
+
+---
+
+### Pasos siguientes para completar el proyecto:
+1.  **Inicialización:** Asegúrate de llamar a `await Firebase.initializeApp()` en tu `main.dart`.
+2.  **Pantallas:** Crea el `ProductoForm` para la entrada de datos y `ListaProductos` para la visualización.
+3.  **Verificación:** Ejecuta la app en el emulador: `flutter run`.
+
+¿Deseas que profundice en el código de la interfaz de usuario para la pantalla de "Alta de Productos" o prefieres configurar primero las reglas de seguridad de Firestore?
