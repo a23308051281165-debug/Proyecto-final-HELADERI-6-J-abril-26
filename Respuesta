@@ -24,14 +24,14 @@ proyectoproductos/
 
 ### 2. Prerrequisitos y Configuración
 
-Ejecuta estos comandos en tu terminal para validar el entorno:
+   Ejecuta estos comandos en tu terminal para validar el entorno:
 
-1.  **Verificar Flutter:** `flutter doctor`
-2.  **Instalar Firebase CLI:** `npm install -g firebase-tools`
-3.  **Login y Conexión:**
-    * `firebase login`
-    * `dart pub global activate flutterfire_cli`
-    * `flutterfire configure` (Selecciona tu proyecto creado en la consola de Firebase).
+   1.  **Verificar Flutter:** `flutter doctor`
+   2.  **Instalar Firebase CLI:** `npm install -g firebase-tools`
+   3.  **Login y Conexión:**
+       * `firebase login`
+       * `dart pub global activate flutterfire_cli`
+       * `flutterfire configure` (Selecciona tu proyecto creado en la consola de Firebase).
 
 ---
 
